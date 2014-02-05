@@ -1,0 +1,24 @@
+{
+    "name": "braids",
+    "description" : "Facilitates the creation and validation of forms in Node applications.",
+    "version": "0.0.1",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/persata/braids.git"
+    },
+    "author": "Ross Kinsman",
+    "license": "BSD",
+    "readmeFilename": "README.md",
+    "main": "index.js",
+    "keywords": [
+        "express",
+        "form",
+        "validation",
+        "errors"
+    ],
+    "dependencies": {
+        "lodash" : "~2.4.1",
+        "underscore.string" : "~2.3.3",
+        "joi" : "~2.1.0"
+    }
+}
