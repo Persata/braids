@@ -45,6 +45,13 @@ class BraidBase
   setFieldValue: (field, value) =>
     @[field] = value
 
+  # Get Values JSON / Object
+  getValues: =>
+    values = {}
+    for field in @.fields
+      values[field] = @[field]
+    return values
+
   # Parse A Request Body Into Parameters
   parseRequestAttributes: (request) =>
     # Loop Over Request Parameters
@@ -182,7 +189,7 @@ class BraidBase
           # Found, Test Type
           if typeof @.customValidators[field] is 'function'
             # Function => Run And Get Result
-            return @._validateCustomFunction(field, @.customValidators[field])
+            return @._validateCustomFunction(field, @.customValidators[field], allErrors)
           else if @.customValidators[field] instanceof Array
             # Array => Validate Each Individually
             return @._validateArrayOfCustomValidators(allErrors, field)
@@ -224,7 +231,7 @@ class BraidBase
       # Else, Store Error Message
       parsedErrorMessage = validationResult.replace '{{label}}', label
       if @.errorMessages[field] and @.errorMessages[field].length > 0 and allErrors
-        @.errorMessages[field].push([parsedErrorMessage])
+        @.errorMessages[field].push(parsedErrorMessage)
       else
         @.errorMessages[field] = [parsedErrorMessage]
 

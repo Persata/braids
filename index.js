@@ -37,6 +37,7 @@
       this.getAllErrors = __bind(this.getAllErrors, this);
       this.validate = __bind(this.validate, this);
       this.parseRequestAttributes = __bind(this.parseRequestAttributes, this);
+      this.getValues = __bind(this.getValues, this);
       this.setFieldValue = __bind(this.setFieldValue, this);
       this.getFieldValue = __bind(this.getFieldValue, this);
       var field, _i, _len, _ref;
@@ -56,6 +57,17 @@
 
     BraidBase.prototype.setFieldValue = function(field, value) {
       return this[field] = value;
+    };
+
+    BraidBase.prototype.getValues = function() {
+      var field, values, _i, _len, _ref;
+      values = {};
+      _ref = this.fields;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        field = _ref[_i];
+        values[field] = this[field];
+      }
+      return values;
     };
 
     BraidBase.prototype.parseRequestAttributes = function(request) {
@@ -194,7 +206,7 @@
         if (allErrors || (this.errorMessages[field] == null)) {
           if (this.customValidators[field] != null) {
             if (typeof this.customValidators[field] === 'function') {
-              return this._validateCustomFunction(field, this.customValidators[field]);
+              return this._validateCustomFunction(field, this.customValidators[field], allErrors);
             } else if (this.customValidators[field] instanceof Array) {
               return this._validateArrayOfCustomValidators(allErrors, field);
             } else {
@@ -232,7 +244,7 @@
       } else {
         parsedErrorMessage = validationResult.replace('{{label}}', label);
         if (this.errorMessages[field] && this.errorMessages[field].length > 0 && allErrors) {
-          return this.errorMessages[field].push([parsedErrorMessage]);
+          return this.errorMessages[field].push(parsedErrorMessage);
         } else {
           return this.errorMessages[field] = [parsedErrorMessage];
         }

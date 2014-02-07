@@ -1,7 +1,7 @@
 {
     "name": "braids",
-    "description" : "Facilitates the creation and validation of forms in Node applications.",
-    "version": "0.0.2",
+    "description": "Facilitates the creation and validation of forms in Node applications.",
+    "version": "0.0.3",
     "repository": {
         "type": "git",
         "url": "git://github.com/persata/braids.git"
@@ -17,8 +17,15 @@
         "errors"
     ],
     "dependencies": {
-        "lodash" : "~2.4.1",
-        "underscore.string" : "~2.3.3",
-        "joi" : "~2.1.0"
+        "lodash": "~2.4.1",
+        "underscore.string": "~2.3.3",
+        "joi": "~2.1.0"
+    },
+    "devDependencies": {
+        "should": "*",
+        "mocha": "*"
+    },
+    "scripts": {
+        "test": "make test"
     }
 }
