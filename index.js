@@ -253,8 +253,22 @@
 
     BraidBase.Model = function() {};
 
-    BraidBase.Model.Extend = function(modelName, modelFields, modelLabels, modelJoiValidators, modelCustomValidators) {
-      var NewModel;
+    BraidBase.Model.Extend = function(options) {
+      var NewModel, modelOptions;
+      modelOptions = {
+        name: void 0,
+        fields: [],
+        labels: {},
+        joiValidators: {},
+        customValidators: {}
+      };
+      modelOptions = _.defaults(options, modelOptions);
+      if (modelOptions.name === void 0) {
+        throw new Error('You Must Specify A Model Name');
+      }
+      if (modelOptions.fields === void 0 || modelOptions.fields.length < 1) {
+        throw new Error('You Must Specify At Least One Field');
+      }
       NewModel = (function(_super) {
         __extends(NewModel, _super);
 
@@ -262,15 +276,15 @@
           return NewModel.__super__.constructor.apply(this, arguments);
         }
 
-        NewModel.prototype.name = modelName;
+        NewModel.prototype.name = modelOptions.name;
 
-        NewModel.prototype.fields = modelFields;
+        NewModel.prototype.fields = modelOptions.fields;
 
-        NewModel.prototype.labels = modelLabels;
+        NewModel.prototype.labels = modelOptions.labels;
 
-        NewModel.prototype.joiValidators = modelJoiValidators;
+        NewModel.prototype.joiValidators = modelOptions.joiValidators;
 
-        NewModel.prototype.customValidators = modelCustomValidators;
+        NewModel.prototype.customValidators = modelOptions.customValidators;
 
         return NewModel;
 
@@ -285,3 +299,5 @@
   module.exports = BraidBase;
 
 }).call(this);
+
+//# sourceMappingURL=index.map
