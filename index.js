@@ -61,12 +61,13 @@
     };
 
     BraidBase.prototype.setValues = function(values) {
-      var fieldKey, fieldValue, _results;
+      var field, _i, _len, _ref, _results;
+      _ref = this.fields;
       _results = [];
-      for (fieldKey in values) {
-        fieldValue = values[fieldKey];
-        if (__indexOf.call(this.fields, fieldKey) >= 0) {
-          _results.push(this[fieldKey] = fieldValue);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        field = _ref[_i];
+        if (values[field]) {
+          _results.push(this[field] = values[field]);
         } else {
           _results.push(void 0);
         }

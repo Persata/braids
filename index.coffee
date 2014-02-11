@@ -47,9 +47,9 @@ class BraidBase
 
     # Mass Assign Values From JSON / Object
   setValues: (values) =>
-    for fieldKey, fieldValue of values
-      if fieldKey in @.fields
-        @[fieldKey] = fieldValue
+    for field in @.fields
+      if values[field]
+        @[field] = values[field]
 
   # Get Values JSON / Object
   getValues: =>

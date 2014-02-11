@@ -193,6 +193,7 @@ describe('Braids', function () {
         testModelInstance.setValues(testObject);
         var goodResult = testModelInstance.validate(true);
         testModelInstance.getValues().email_address.should.equal('emailaddress@example.com');
+        testModelInstance.email_address.should.equal('emailaddress@example.com');
         testModelInstance.getValues().password.should.equal('password987');
         goodResult.should.be.true;
         badResult.should.be.false;
