@@ -38,6 +38,7 @@
       this.validate = __bind(this.validate, this);
       this.parseRequestAttributes = __bind(this.parseRequestAttributes, this);
       this.getValues = __bind(this.getValues, this);
+      this.setValues = __bind(this.setValues, this);
       this.setFieldValue = __bind(this.setFieldValue, this);
       this.getFieldValue = __bind(this.getFieldValue, this);
       var field, _i, _len, _ref;
@@ -57,6 +58,20 @@
 
     BraidBase.prototype.setFieldValue = function(field, value) {
       return this[field] = value;
+    };
+
+    BraidBase.prototype.setValues = function(values) {
+      var fieldKey, fieldValue, _results;
+      _results = [];
+      for (fieldKey in values) {
+        fieldValue = values[fieldKey];
+        if (__indexOf.call(this.fields, fieldKey) >= 0) {
+          _results.push(this[fieldKey] = fieldValue);
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
     };
 
     BraidBase.prototype.getValues = function() {
@@ -299,5 +314,3 @@
   module.exports = BraidBase;
 
 }).call(this);
-
-//# sourceMappingURL=index.map
