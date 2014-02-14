@@ -244,32 +244,41 @@ class BraidBase
   # Model
   @Model = ->
     #	Model Extend
-  @Model.Extend = (options) ->
-    # Default Options
-    modelOptions = {
-      name: undefined,
-      fields: [],
-      labels: {},
-      joiValidators: {},
-      customValidators: {}
-    }
-    # Parse Defaults From Given Params
-    modelOptions = _.defaults(options, modelOptions)
-    # Some Basic Checking
-    if modelOptions.name is undefined
-      throw new Error 'You Must Specify A Model Name'
-    if modelOptions.fields is undefined or modelOptions.fields.length < 1
-      throw new Error 'You Must Specify At Least One Field'
-    # New Class
-    class NewModel extends BraidBase
-      # Attributes
-      name: modelOptions.name
-      fields: modelOptions.fields
-      labels: modelOptions.labels
-      joiValidators: modelOptions.joiValidators
-      customValidators: modelOptions.customValidators
-    # Return
-    return NewModel
+  @Model.Extend = (protoProps, staticProps) ->
+    parent = this
+    child = undefined
+
+    # The constructor function for the new subclass is either defined by you
+    # (the "constructor" property in your `extend` definition), or defaulted
+    # by us to simply call the parent's constructor.
+    if protoProps and _.has(protoProps, "constructor")
+      child = protoProps.constructor
+    else
+      child = ->
+        parent.apply this, arguments
+
+    # Add static properties to the constructor function, if supplied.
+    _.extend child, parent, staticProps
+
+    # Set the prototype chain to inherit from `parent`, without calling
+    # `parent`'s constructor function.
+    Surrogate = ->
+      @constructor = child
+      return
+
+    Surrogate:: = parent::
+    child:: = new Surrogate
+
+    # Add prototype properties (instance properties) to the subclass,
+    # if supplied.
+    _.extend child::, protoProps  if protoProps
+
+    # Set a convenience property in case the parent's prototype is needed
+    # later.
+    child.__super__ = parent::
+
+    # Return Child
+    return child
 
 # Module Exports
 module.exports = BraidBase
