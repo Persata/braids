@@ -243,9 +243,9 @@ class BraidBase
 
   # Model
   @Model = ->
-    #	Model Extend
-  @Model.Extend = (protoProps, staticProps) ->
-    parent = this
+  #	Model Extend
+  @Model.Extend = (protoProps) ->
+    parent = BraidBase
     child = undefined
 
     # The constructor function for the new subclass is either defined by you
@@ -257,9 +257,6 @@ class BraidBase
       child = ->
         parent.apply this, arguments
 
-    # Add static properties to the constructor function, if supplied.
-    _.extend child, parent, staticProps
-
     # Set the prototype chain to inherit from `parent`, without calling
     # `parent`'s constructor function.
     Surrogate = ->
@@ -269,12 +266,11 @@ class BraidBase
     Surrogate:: = parent::
     child:: = new Surrogate
 
-    # Add prototype properties (instance properties) to the subclass,
-    # if supplied.
-    _.extend child::, protoProps  if protoProps
+    # Add prototype properties (instance properties) to the subclass, if supplied.
+    if protoProps
+      _.extend child::, protoProps
 
-    # Set a convenience property in case the parent's prototype is needed
-    # later.
+    # Set a convenience property in case the parent's prototype is needed later.
     child.__super__ = parent::
 
     # Return Child

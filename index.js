@@ -267,9 +267,9 @@
 
     BraidBase.Model = function() {};
 
-    BraidBase.Model.Extend = function(protoProps, staticProps) {
+    BraidBase.Model.Extend = function(protoProps) {
       var Surrogate, child, parent;
-      parent = this;
+      parent = BraidBase;
       child = void 0;
       if (protoProps && _.has(protoProps, "constructor")) {
         child = protoProps.constructor;
@@ -278,7 +278,6 @@
           return parent.apply(this, arguments);
         };
       }
-      _.extend(child, parent, staticProps);
       Surrogate = function() {
         this.constructor = child;
       };
