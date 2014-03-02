@@ -61,18 +61,15 @@
     };
 
     BraidBase.prototype.setValues = function(values) {
-      var field, _i, _len, _ref, _results;
+      var field, _i, _len, _ref;
       _ref = this.fields;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         field = _ref[_i];
         if (values[field]) {
-          _results.push(this[field] = values[field]);
-        } else {
-          _results.push(void 0);
+          this[field] = values[field];
         }
       }
-      return _results;
+      return this;
     };
 
     BraidBase.prototype.getValues = function() {
@@ -315,3 +312,5 @@
   module.exports = BraidBase;
 
 }).call(this);
+
+//# sourceMappingURL=index.map

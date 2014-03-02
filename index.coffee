@@ -50,6 +50,7 @@ class BraidBase
     for field in @.fields
       if values[field]
         @[field] = values[field]
+    return @
 
   # Get Values JSON / Object
   getValues: =>
