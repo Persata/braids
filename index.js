@@ -2,9 +2,7 @@
 (function() {
   var BraidBase, _,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   _ = require('lodash');
 
@@ -267,7 +265,7 @@
     BraidBase.Model = function() {};
 
     BraidBase.Model.Extend = function(options) {
-      var NewModel, modelOptions;
+      var Surrogate, child, modelOptions, parent;
       modelOptions = {
         name: void 0,
         fields: [],
@@ -282,27 +280,25 @@
       if (modelOptions.fields === void 0 || modelOptions.fields.length < 1) {
         throw new Error('You Must Specify At Least One Field');
       }
-      NewModel = (function(_super) {
-        __extends(NewModel, _super);
-
-        function NewModel() {
-          return NewModel.__super__.constructor.apply(this, arguments);
-        }
-
-        NewModel.prototype.name = modelOptions.name;
-
-        NewModel.prototype.fields = modelOptions.fields;
-
-        NewModel.prototype.labels = modelOptions.labels;
-
-        NewModel.prototype.joiValidators = modelOptions.joiValidators;
-
-        NewModel.prototype.customValidators = modelOptions.customValidators;
-
-        return NewModel;
-
-      })(BraidBase);
-      return NewModel;
+      parent = BraidBase;
+      child = void 0;
+      if (modelOptions && _.has(modelOptions, "constructor")) {
+        child = modelOptions.constructor;
+      } else {
+        child = function() {
+          return parent.apply(this, arguments);
+        };
+      }
+      Surrogate = function() {
+        this.constructor = child;
+      };
+      Surrogate.prototype = parent.prototype;
+      child.prototype = new Surrogate;
+      if (modelOptions) {
+        _.extend(child.prototype, modelOptions);
+      }
+      child.__super__ = parent.prototype;
+      return child;
     };
 
     return BraidBase;
