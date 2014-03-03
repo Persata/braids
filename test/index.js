@@ -72,7 +72,6 @@ describe('Braids', function () {
      * Before - Create Model and Instance
      */
     before(function () {
-//        testModel = BraidsBase.Model.Extend(modelName, modelFields, modelLabels, modelValidators, customValidators);
         testModel = BraidsBase.Model.Extend({
             name: modelName,
             fields: modelFields,
