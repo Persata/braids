@@ -249,7 +249,7 @@
       var fieldValue, label, parsedErrorMessage, validationResult;
       label = this.getLabelText(field);
       fieldValue = this.getFieldValue(field);
-      validationResult = validationFunction(fieldValue);
+      validationResult = validationFunction(fieldValue, this);
       if (validationResult === true) {
         return true;
       } else {

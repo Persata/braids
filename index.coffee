@@ -230,7 +230,7 @@ class BraidBase
 		# Get Value
 		fieldValue = @.getFieldValue(field)
 		# Call Validation Function
-		validationResult = validationFunction(fieldValue)
+		validationResult = validationFunction(fieldValue, @)
 		# If True, i.e. Valid
 		if validationResult is true
 			return true
