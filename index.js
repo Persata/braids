@@ -104,7 +104,7 @@
       if (this._joiValidate(allErrors) === false) {
         modelIsValid = false;
       }
-      if (this._customValidate(allErrors) === false) {
+      if (this._customValidate(allErrors) !== true) {
         modelIsValid = false;
       }
       return modelIsValid;

@@ -82,7 +82,7 @@ class BraidBase
 		if @._joiValidate(allErrors) is false
 			modelIsValid = false
 		# Custom Validators
-		if @._customValidate(allErrors) is false
+		if @._customValidate(allErrors) isnt true
 			modelIsValid = false
 		# Return Model Validation Result
 		return modelIsValid
