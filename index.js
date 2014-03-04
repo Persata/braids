@@ -210,22 +210,34 @@
     };
 
     BraidBase.prototype._customValidate = function(allErrors) {
-      var field, _i, _len, _ref;
+      var field, overallResult, _i, _len, _ref;
+      overallResult = true;
       _ref = this.fields;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         field = _ref[_i];
         if (allErrors || (this.errorMessages[field] == null)) {
           if (this.customValidators[field] != null) {
             if (typeof this.customValidators[field] === 'function') {
-              return this._validateCustomFunction(field, this.customValidators[field], allErrors);
+              if (this._validateCustomFunction(field, this.customValidators[field], allErrors) !== true) {
+                overallResult = false;
+                if (allErrors) {
+                  return overallResult;
+                }
+              }
             } else if (this.customValidators[field] instanceof Array) {
-              return this._validateArrayOfCustomValidators(allErrors, field);
+              if (this._validateArrayOfCustomValidators(allErrors, field)) {
+                overallResult = false;
+                if (allErrors) {
+                  return overallResult;
+                }
+              }
             } else {
               throw new Error('Custom Validators Must Be A Function Or An Array Of Functions');
             }
           }
         }
       }
+      return overallResult;
     };
 
     BraidBase.prototype._validateArrayOfCustomValidators = function(allErrors, field) {

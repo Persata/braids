@@ -187,6 +187,8 @@ class BraidBase
 
 	# Run Custom Validators
 	_customValidate: (allErrors) =>
+		# Overall Result
+		overallResult = true
 		# Iterate Over Fields
 		for field in @.fields
 			# If All Errors And An Error Message Already Exists, Skip
@@ -196,13 +198,19 @@ class BraidBase
 					# Found, Test Type
 					if typeof @.customValidators[field] is 'function'
 						# Function => Run And Get Result
-						return @._validateCustomFunction(field, @.customValidators[field], allErrors)
+						if @._validateCustomFunction(field, @.customValidators[field], allErrors) isnt true
+							overallResult = false
+							return overallResult if allErrors
 					else if @.customValidators[field] instanceof Array
 						# Array => Validate Each Individually
-						return @._validateArrayOfCustomValidators(allErrors, field)
+						if @._validateArrayOfCustomValidators(allErrors, field)
+							overallResult = false
+							return overallResult if allErrors
 					else
 						# Unknown Type => Throw Exception
 						throw new Error('Custom Validators Must Be A Function Or An Array Of Functions')
+		# Return Overall Result
+		return overallResult
 
 	# Handle Array of Custom Validators
 	_validateArrayOfCustomValidators: (allErrors, field) =>
