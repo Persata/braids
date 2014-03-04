@@ -138,7 +138,7 @@ class BraidBase
 			fieldName = @.name + '_' + field
 			return fieldName
 		else
-			throw new Error 'Field Not Found In ' + @.name ' Model'
+			throw new Error "Field #{field} Not Found In " + @.name + " Model"
 
 	# Validate Using Joi
 	_joiValidate: (allErrors) =>
