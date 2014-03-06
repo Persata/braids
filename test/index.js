@@ -72,21 +72,20 @@ describe('Braids', function () {
      * Before - Create Model and Instance
      */
     before(function () {
-        testModel = BraidsBase.Model.Extend({
-            name: modelName,
-            fields: modelFields,
-            labels: modelLabels,
-            joiValidators: modelValidators,
-            customValidators: customValidators
-        });
         testModelWithoutLabels = BraidsBase.Model.Extend({
             name: modelName,
             fields: modelFields,
             joiValidators: modelValidators,
             customValidators: customValidators
         });
-        testModelInstance = new testModel();
+        testModel = testModelWithoutLabels.Extend({
+            name: modelName,
+            fields: modelFields,
+            joiValidators: modelValidators,
+            customValidators: customValidators
+        });
         testModelWithoutLabelsInstance = new testModelWithoutLabels();
+        testModelInstance = new testModel();
     });
 
     it('should be extendable', function (done) {
