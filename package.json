@@ -19,7 +19,7 @@
     "dependencies": {
         "lodash": "~2.4.1",
         "underscore.string": "~2.3.3",
-        "joi": "~2.1.0"
+        "joi": "~2.7.0"
     },
     "devDependencies": {
         "should": "*",

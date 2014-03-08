@@ -37,7 +37,7 @@ describe('Braids', function () {
      * Model Validators
      */
     var modelValidators = {
-        email_address: BraidsBase.joi.string().required().email(),
+        email_address: BraidsBase.joi.string().email().required(),
         password: BraidsBase.joi.string().required()
     };
 
@@ -72,17 +72,14 @@ describe('Braids', function () {
      * Before - Create Model and Instance
      */
     before(function () {
-        testModelWithoutLabels = BraidsBase.Model.Extend({
+        testModelWithoutLabels = BraidsBase.Model.extend({
             name: modelName,
             fields: modelFields,
             joiValidators: modelValidators,
             customValidators: customValidators
         });
-        testModel = testModelWithoutLabels.Extend({
-            name: modelName,
-            fields: modelFields,
-            joiValidators: modelValidators,
-            customValidators: customValidators
+        testModel = testModelWithoutLabels.extend({
+            labels: modelLabels
         });
         testModelWithoutLabelsInstance = new testModelWithoutLabels();
         testModelInstance = new testModel();

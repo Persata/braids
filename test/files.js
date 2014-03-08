@@ -39,6 +39,15 @@ describe('Braids - File Upload Functionality', function () {
     var modelValidators = {};
 
     /**
+     * File Validators
+     */
+    var fileValidators = {
+        picture: BraidsBase.FileValidator.extend({
+            required: true
+        })
+    };
+
+    /**
      * File Upload Good Values
      */
     var fileGoodValuesRequestStub = {files: {avatarForm_picture: {name: 'me.jpg', originalFilename: 'me.jpg', path: '/var/tmp/9911-lpnc4.jpg', size: 66258, type: 'image/png'}}};
@@ -46,9 +55,9 @@ describe('Braids - File Upload Functionality', function () {
     /**
      * File Upload Bad Values
      */
-    var filesBadValueRequestStubNoFile = {files: {}};
-    var filesBadValueRequestStubSizeIssue = {files: {}};
-    var filesBadValueRequestStubInvalidType = {files: {}};
+    var filesBadValueRequestStubNoFile = {files: {avatarForm_picture: {name: '', originalFilename: '', path: '/var/tmp/', size: 0, type: 'application/octet-stream'}}};
+    var filesBadValueRequestStubSizeIssue = {files: {avatarForm_picture: {name: 'me.jpg', originalFilename: 'me.jpg', path: '/var/tmp/9911-lpnc4.jpg', size: 3145728, type: 'image/jpeg'}}};
+    var filesBadValueRequestStubInvalidType = {files: {avatarForm_picture: {name: 'you.zip', originalFilename: 'me.jpg', path: '/var/tmp/9911-lpnc4.jpg', size: 66258, type: 'application/zip'}}};
 
     /**
      * Before - Create Model and Instance
@@ -58,7 +67,8 @@ describe('Braids - File Upload Functionality', function () {
             name: modelName,
             fields: modelFields,
             labels: modelLabels,
-            joiValidators: modelValidators
+            joiValidators: modelValidators,
+            fileValidators: fileValidators
         });
         testModelInstance = new testModel();
     });
