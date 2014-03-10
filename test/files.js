@@ -8,12 +8,12 @@ describe('Braids - File Upload Functionality', function () {
     /**
      * Test Models
      */
-    var testModel;
+    var testModel, testModelWildcard;
 
     /**
      * Test Model Instances
      */
-    var testModelInstance;
+    var testModelInstance, testModelWildcardInstance;
 
     /**
      * Model Name
@@ -39,12 +39,26 @@ describe('Braids - File Upload Functionality', function () {
     var modelValidators = {};
 
     /**
-     * File Validators
+     * File Validators - Exact MIME-Types
      */
     var fileValidators = {
         picture: BraidsBase.FileValidator.extend({
             required: true,
-            validMimeTypes: ['image/jpg', 'image/jpeg', 'image/png', 'image/gif']
+            validMimeTypes: ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'],
+            maxFileSize: 2097152,
+            enforceMimeMatch: true
+        })
+    };
+
+    /**
+     * File Validators - Wildcard MIME-Types
+     */
+    var fileValidatorsWildcard = {
+        picture: BraidsBase.FileValidator.extend({
+            required: true,
+            validMimeTypes: ['image/*'],
+            maxFileSize: '2M',
+            enforceMimeMatch: true
         })
     };
 
@@ -71,7 +85,11 @@ describe('Braids - File Upload Functionality', function () {
             joiValidators: modelValidators,
             fileValidators: fileValidators
         });
+        testModelWildcard = testModel.Extend({
+            fileValidators: fileValidatorsWildcard
+        });
         testModelInstance = new testModel();
+        testModelWildcardInstance = new testModelWildcard();
     });
 
     it('should parse request files into the form values', function(done) {
@@ -102,16 +120,35 @@ describe('Braids - File Upload Functionality', function () {
         done();
     });
 
-//    it('should validate unsuccessfully for this file upload because the file was too big', function(done) {
-//        var result = testModelInstance.parseRequestAttributes(filesBadValueRequestStubSizeIssue).validate(true);
-//        result.should.be.false;
-//        done();
-//    });
-
-    it('should validate unsuccessfully for this file upload because the file was an invalid type', function(done) {
-        var result = testModelInstance.parseRequestAttributes(filesBadValueRequestStubInvalidType).validate(true);
+    it('should validate unsuccessfully for this file upload because the file was too big', function(done) {
+        var result = testModelInstance.parseRequestAttributes(filesBadValueRequestStubSizeIssue).validate(true);
         result.should.be.false;
-        console.log(testModelInstance.getAllErrors());
+        done();
+    });
+
+    it('should validate unsuccessfully for this file upload because the file was an invalid type with exact types specified', function(done) {
+        var result = testModelInstance.parseRequestAttributes(filesBadValueRequestStubInvalidType).validate(true);
+        var errors = testModelInstance.getAllErrors();
+        result.should.be.false;
+        errors.should.have.property('picture');
+        errors.picture.should.be.an.Array;
+        errors.picture.should.containEql('Your Avatar Image must be one of the following file types: image/jpg, image/jpeg, image/png, image/gif');
+        done();
+    });
+
+    it('should validate unsuccessfully for this file upload because the file was an invalid type with wildcard type specified', function(done) {
+        var result = testModelWildcardInstance.parseRequestAttributes(filesBadValueRequestStubInvalidType).validate(true);
+        var errors = testModelWildcardInstance.getAllErrors();
+        result.should.be.false;
+        errors.should.have.property('picture');
+        errors.picture.should.be.an.Array;
+        errors.picture.should.containEql('Your Avatar Image must be one of the following file types: image/*');
+        done();
+    });
+
+    it('should validate successfully for this file upload with wildcard mime types', function(done) {
+        var result = testModelWildcardInstance.parseRequestAttributes(fileGoodValuesRequestStub).validate(true);
+        result.should.be.true;
         done();
     });
 });
