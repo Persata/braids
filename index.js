@@ -197,22 +197,28 @@
         }
         return new Promise((function(_this) {
           return function(resolve, reject) {
-            var modelIsValid;
+            var e, modelIsValid;
             _this.errorMessages = [];
             modelIsValid = true;
-            if (_this._joiValidate(allErrors) === false) {
-              modelIsValid = false;
-            }
-            if (_this._customValidate(allErrors) === false) {
-              modelIsValid = false;
-            }
-            if (_this._fileValidate(allErrors) === false) {
-              modelIsValid = false;
-            }
-            if (modelIsValid) {
-              return resolve(_this.getValues());
-            } else {
-              return reject(_this.getAllErrors(), _this.getValues());
+            try {
+              if (_this._joiValidate(allErrors) === false) {
+                modelIsValid = false;
+              }
+              if (_this._customValidate(allErrors) === false) {
+                modelIsValid = false;
+              }
+              if (_this._fileValidate(allErrors) === false) {
+                modelIsValid = false;
+              }
+              return resolve({
+                valid: modelIsValid,
+                model: _this,
+                values: _this.getValues(),
+                errors: _this.getAllErrors()
+              });
+            } catch (_error) {
+              e = _error;
+              return reject(e);
             }
           };
         })(this));

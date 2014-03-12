@@ -131,20 +131,22 @@ describe('Braids', function () {
 //    });
 //
     it('should validate successfully with these values', function (done) {
-        testModelInstance.parseRequestAttributes(goodValueRequestStub).validate().then(function (formValues) {
-            formValues.should.have.property('email_address');
-            formValues.should.have.property('password');
+        testModelInstance.parseRequestAttributes(goodValueRequestStub).validate().then(function (validationResult) {
+            validationResult.should.have.property('valid');
+            validationResult.valid.should.be.true;
             done();
-        }).catch(function (errors, formValues) {
+        }).catch(function (e) {
+            done(e);
         });
     });
 //
     it('should validate unsuccessfully with these values', function (done) {
-        testModelInstance.parseRequestAttributes(badValueRequestStub).validate().then(function (formValues) {
-        }).catch(function (errors, formValues) {
-            console.log(errors);
-            console.log(formValues);
+        testModelInstance.parseRequestAttributes(badValueRequestStub).validate().then(function (validationResult) {
+            validationResult.should.have.property('valid');
+            validationResult.valid.should.be.false;
             done();
+        }).catch(function (e) {
+            done(e);
         });
     });
 //

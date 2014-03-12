@@ -188,20 +188,23 @@ class Braids
         @.errorMessages = []
         # Final Result
         modelIsValid = true
-        # Validate Joi Schema
-        if @._joiValidate(allErrors) is false
-          modelIsValid = false
-        # Custom Validators
-        if @._customValidate(allErrors) is false
-          modelIsValid = false
-        # File Validators
-        if @._fileValidate(allErrors) is false
-          modelIsValid = false
-        # Return Model Validation Result
-        if modelIsValid
-          resolve @.getValues()
-        else
-          reject @.getAllErrors(), @.getValues()
+        # Try Validation
+        try
+          # Validate Joi Schema
+          if @._joiValidate(allErrors) is false
+            modelIsValid = false
+          # Custom Validators
+          if @._customValidate(allErrors) is false
+            modelIsValid = false
+          # File Validators
+          if @._fileValidate(allErrors) is false
+            modelIsValid = false
+          # Return Model Validation Result
+          resolve { valid: modelIsValid, model: @, values: @.getValues(), errors: @.getAllErrors() }
+        # Catch Any Errors
+        catch e
+          # Reject Promise Because Of Error
+          reject e
       )
 
     # Add Error For Field
