@@ -112,7 +112,6 @@
 
       function Model() {
         this._fileValidate = __bind(this._fileValidate, this);
-        this._validateCustomFunction = __bind(this._validateCustomFunction, this);
         this._validateArrayOfCustomValidators = __bind(this._validateArrayOfCustomValidators, this);
         this._customValidate = __bind(this._customValidate, this);
         this._joiValidate = __bind(this._joiValidate, this);
@@ -201,20 +200,19 @@
             _this.errorMessages = [];
             modelIsValid = true;
             try {
-              if (_this._joiValidate(allErrors) === false) {
-                modelIsValid = false;
-              }
-              if (_this._customValidate(allErrors) === false) {
-                modelIsValid = false;
-              }
-              if (_this._fileValidate(allErrors) === false) {
-                modelIsValid = false;
-              }
-              return resolve({
-                valid: modelIsValid,
-                model: _this,
-                values: _this.getValues(),
-                errors: _this.getAllErrors()
+              return Promise.all(_this._customValidate(allErrors)).then(function(results) {
+                _.remove(results, function(result) {
+                  return result === true;
+                });
+                if (results.length > 0) {
+                  modelIsValid = false;
+                }
+                return resolve({
+                  valid: modelIsValid,
+                  model: _this,
+                  values: _this.getValues(),
+                  errors: _this.getAllErrors()
+                });
               });
             } catch (_error) {
               e = _error;
@@ -334,22 +332,22 @@
       };
 
       Model.prototype._customValidate = function(allErrors) {
-        var field, _i, _len, _ref;
+        var field, promises, _i, _len, _ref;
+        promises = [];
         _ref = this.fields;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           field = _ref[_i];
           if (allErrors || (this.errorMessages[field] == null)) {
             if (this.customValidators[field] != null) {
               if (typeof this.customValidators[field] === 'function') {
-                return this._validateCustomFunction(field, this.customValidators[field], allErrors);
-              } else if (this.customValidators[field] instanceof Array) {
-                return this._validateArrayOfCustomValidators(allErrors, field);
+                promises.push(this._validateCustomFunction(field, this.customValidators[field], allErrors));
               } else {
                 throw new Error('Custom Validators Must Be A Function Or An Array Of Functions');
               }
             }
           }
         }
+        return promises;
       };
 
       Model.prototype._validateArrayOfCustomValidators = function(allErrors, field) {
@@ -370,16 +368,10 @@
       };
 
       Model.prototype._validateCustomFunction = function(field, validationFunction, allErrors) {
-        var fieldValue, label, parsedErrorMessage, validationResult;
+        var fieldValue, label;
         label = this.getLabelText(field);
         fieldValue = this.getFieldValue(field);
-        validationResult = validationFunction(fieldValue);
-        if (validationResult === true) {
-          return true;
-        } else {
-          parsedErrorMessage = validationResult.replace('{{label}}', label);
-          return this.addError(field, parsedErrorMessage, allErrors);
-        }
+        return validationFunction(fieldValue).then();
       };
 
       Model.prototype._fileValidate = function(allErrors) {

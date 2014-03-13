@@ -1,6 +1,8 @@
 'use strict';
 
 var BraidsBase = require('../');
+var Promise = require('bluebird');
+var Knex = require('knex');
 var should = require('should');
 
 describe('Braids', function () {
@@ -46,21 +48,39 @@ describe('Braids', function () {
      * @type {{}}
      */
     var customValidators = {
+//        email_address: function (value) {
+//            if (value === 'notanemailaddress') {
+//                return 'That is obviously not an email address';
+//            } else if (value === 'definitelynotanemailaddress') {
+//                return 'That value for {{label}} is not allowed';
+//            } else {
+//                return true;
+//            }
+//        }
         email_address: function (value) {
-            if (value === 'notanemailaddress') {
-                return 'That is obviously not an email address';
-            } else if (value === 'definitelynotanemailaddress') {
-                return 'That value for {{label}} is not allowed';
-            } else {
-                return true;
-            }
+            return new Promise(function (resolve) {
+                knexInstance('users').select('email').where('email', '=', value).then(function(result) {
+                    if (result.length > 0) {
+                        resolve('That user already exists.');
+                    } else {
+                        resolve(true);
+                    }
+                });
+//                if (value === 'notanemailaddress') {
+//                    resolve('That is obviously not an email address');
+//                } else if (value === 'definitelynotanemailaddress') {
+//                    resolve('That value for {{label}} is not allowed');
+//                } else {
+//                    resolve(true);
+//                }
+            });
         }
     };
 
     /**
      * Good Values to Test
      */
-    var goodValueRequestStub = {body: {loginForm_email_address: 'valid@example.com', loginForm_password: 'password456'}};
+    var goodValueRequestStub = {body: {loginForm_email_address: 'persata@gmail.com', loginForm_password: 'password456'}};
 
     /**
      * Bad Values To Test
@@ -69,9 +89,14 @@ describe('Braids', function () {
     var badValueRequestStubWithLabelTest = {body: {loginForm_email_address: 'definitelynotanemailaddress', loginForm_password: ''}};
 
     /**
+     * Knex Instance
+     */
+    var knexInstance;
+
+    /**
      * Before - Create Model and Instance
      */
-    before(function () {
+    before(function (done) {
         testModelWithoutLabels = BraidsBase.Model.extend({
             name: modelName,
             fields: modelFields,
@@ -83,10 +108,19 @@ describe('Braids', function () {
         });
         testModelWithoutLabelsInstance = new testModelWithoutLabels();
         testModelInstance = new testModel();
+        // Knex Instance
+        knexInstance = Knex.initialize({
+            client: 'sqlite',
+            connection: {
+                filename: "test/test.db"
+            }
+        });
+        done();
     });
 
     it('should be extendable', function (done) {
         testModel.should.be.a.Function;
+
         done();
     });
 

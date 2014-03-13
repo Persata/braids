@@ -20,11 +20,13 @@
     "lodash": "~2.4.1",
     "underscore.string": "~2.3.3",
     "joi": "~2.7.0",
-    "bluebird": "^1.1.0"
+    "bluebird": "^1.1.0",
+    "sqlite3": "^2.2.0"
   },
   "devDependencies": {
     "should": "*",
-    "mocha": "*"
+    "mocha": "*",
+    "knex": "^0.5.8"
   },
   "scripts": {
     "test": "make test"

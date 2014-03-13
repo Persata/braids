@@ -190,20 +190,30 @@ class Braids
         modelIsValid = true
         # Try Validation
         try
-          # Validate Joi Schema
-          if @._joiValidate(allErrors) is false
-            modelIsValid = false
+          # Wait For All Custom Promises
+          Promise.all(@._customValidate(allErrors)).then (results) =>
+            # Check All Results
+            _.remove(results, (result) -> result is true)
+            # Results That Aren't True Are Errors
+            if results.length > 0
+              # Model Is Invalid, Received Some Errors
+              modelIsValid = false
+            # Resolve
+            resolve { valid: modelIsValid, model: @, values: @.getValues(), errors: @.getAllErrors() }
+        # Validate Joi Schema
+#          if @._joiValidate(allErrors) is false
+#            modelIsValid = false
           # Custom Validators
-          if @._customValidate(allErrors) is false
-            modelIsValid = false
+
+#          if @._customValidate(allErrors) is false
+#            modelIsValid = false
           # File Validators
-          if @._fileValidate(allErrors) is false
-            modelIsValid = false
-          # Return Model Validation Result
-          resolve { valid: modelIsValid, model: @, values: @.getValues(), errors: @.getAllErrors() }
+#          if @._fileValidate(allErrors) is false
+#            modelIsValid = false
+#          Return Model Validation Result
         # Catch Any Errors
         catch e
-          # Reject Promise Because Of Error
+        # Reject Promise Because Of Error
           reject e
       )
 
@@ -316,6 +326,8 @@ class Braids
 
     # Run Custom Validators
     _customValidate: (allErrors) =>
+      # Promises Array
+      promises = []
       # Iterate Over Fields
       for field in @.fields
         # If All Errors And An Error Message Already Exists, Skip
@@ -325,13 +337,15 @@ class Braids
             # Found, Test Type
             if typeof @.customValidators[field] is 'function'
               # Function => Run And Get Result
-              return @._validateCustomFunction(field, @.customValidators[field], allErrors)
-            else if @.customValidators[field] instanceof Array
-              # Array => Validate Each Individually
-              return @._validateArrayOfCustomValidators(allErrors, field)
+              promises.push @._validateCustomFunction(field, @.customValidators[field], allErrors)
+#            else if @.customValidators[field] instanceof Array
+#              Array => Validate Each Individually
+#              return @._validateArrayOfCustomValidators(allErrors, field)
             else
               # Unknown Type => Throw Exception
               throw new Error('Custom Validators Must Be A Function Or An Array Of Functions')
+      # Return Promises
+      return promises
 
     # Handle Array of Custom Validators
     _validateArrayOfCustomValidators: (allErrors, field) =>
@@ -352,21 +366,22 @@ class Braids
       # Return Overall Result Once All Validated
       return overallResult
 
+
     # Validate A Single Custom Function
-    _validateCustomFunction: (field, validationFunction, allErrors) =>
+    _validateCustomFunction: (field, validationFunction, allErrors) ->
       # Get Label
       label = @.getLabelText(field)
       # Get Value
       fieldValue = @.getFieldValue(field)
       # Call Validation Function
-      validationResult = validationFunction(fieldValue)
+      validationFunction(fieldValue).then()
       # If True, i.e. Valid
-      if validationResult is true
-        return true
-      else
-        # Else, Store Error Message
-        parsedErrorMessage = validationResult.replace '{{label}}', label
-        @.addError(field, parsedErrorMessage, allErrors)
+#      if validationResult is true
+#        return true
+#      else
+#        Else, Store Error Message
+#        parsedErrorMessage = validationResult.replace '{{label}}', label
+#        @.addError(field, parsedErrorMessage, allErrors)
 
     # Validate Any Files Against File Validation Functions
     _fileValidate: (allErrors) =>
