@@ -3,7 +3,7 @@
 var BraidsBase = require('../');
 var should = require('should');
 
-describe('Braids - File Upload Functionality', function () {
+describe('Braids - File Upload Functionality', function() {
 
     /**
      * Test Models
@@ -77,7 +77,7 @@ describe('Braids - File Upload Functionality', function () {
     /**
      * Before - Create Model and Instance
      */
-    before(function () {
+    before(function() {
         testModel = BraidsBase.Model.Extend({
             name: modelName,
             fields: modelFields,
@@ -91,7 +91,7 @@ describe('Braids - File Upload Functionality', function () {
         testModelInstance = new testModel();
         testModelWildcardInstance = new testModelWildcard();
     });
-
+//
 //    it('should parse request files into the form values', function(done) {
 //        testModelInstance.parseRequestAttributes(fileGoodValuesRequestStub);
 //        var picture = testModelInstance.getFieldValue('picture');
@@ -104,51 +104,69 @@ describe('Braids - File Upload Functionality', function () {
 //        done();
 //    });
 //
-//    it('should validate successfully for this file upload', function (done) {
-//        var result = testModelInstance.parseRequestAttributes(fileGoodValuesRequestStub).validate(true);
-//        result.should.be.true;
-//        done();
+//    it('should validate successfully for this file upload', function(done) {
+//        testModelInstance.parseRequestAttributes(fileGoodValuesRequestStub).validate(true).then(function(validationResult) {
+//            validationResult.valid.should.be.true;
+//            done();
+//        }).catch(function(e) {
+//            done(e);
+//        });
 //    });
 //
 //    it('should validate unsuccessfully for this file upload because no file was uploaded', function(done) {
-//        var result = testModelInstance.parseRequestAttributes(filesBadValueRequestStubNoFile).validate(true);
-//        var errors = testModelInstance.getAllErrors();
-//        result.should.be.false;
-//        errors.should.have.property('picture');
-//        errors.picture.should.be.an.Array;
-//        errors.picture.should.containEql('Your Avatar Image is a required field');
-//        done();
+//        testModelInstance.parseRequestAttributes(filesBadValueRequestStubNoFile).validate(true).then(function(validationResult) {
+//            validationResult.valid.should.be.false;
+//            validationResult.errors.should.have.property('picture');
+//            validationResult.errors.picture.should.be.an.Array;
+//            validationResult.errors.picture.should.containEql('Your Avatar Image is a required field');
+//            done();
+//        }).catch(function(e) {
+//            done(e);
+//        });
 //    });
 //
 //    it('should validate unsuccessfully for this file upload because the file was too big', function(done) {
-//        var result = testModelInstance.parseRequestAttributes(filesBadValueRequestStubSizeIssue).validate(true);
-//        result.should.be.false;
-//        done();
+//        testModelInstance.parseRequestAttributes(filesBadValueRequestStubSizeIssue).validate(true).then(function(validationResult) {
+//            validationResult.valid.should.be.false;
+//            validationResult.errors.should.have.property('picture');
+//            validationResult.errors.picture.should.be.an.Array;
+//            validationResult.errors.picture.should.containEql('Your Avatar Image is too large - it must be smaller than 2MB');
+//            done();
+//        }).catch(function(e) {
+//            done(e);
+//        });
 //    });
 //
 //    it('should validate unsuccessfully for this file upload because the file was an invalid type with exact types specified', function(done) {
-//        var result = testModelInstance.parseRequestAttributes(filesBadValueRequestStubInvalidType).validate(true);
-//        var errors = testModelInstance.getAllErrors();
-//        result.should.be.false;
-//        errors.should.have.property('picture');
-//        errors.picture.should.be.an.Array;
-//        errors.picture.should.containEql('Your Avatar Image must be one of the following file types: image/jpg, image/jpeg, image/png, image/gif');
-//        done();
+//        testModelInstance.parseRequestAttributes(filesBadValueRequestStubInvalidType).validate(true).then(function(validationResult) {
+//            validationResult.valid.should.be.false;
+//            validationResult.errors.should.have.property('picture');
+//            validationResult.errors.picture.should.be.an.Array;
+//            validationResult.errors.picture.should.containEql('Your Avatar Image must be one of the following file types: image/jpg, image/jpeg, image/png, image/gif');
+//            done();
+//        }).catch(function(e) {
+//            done(e);
+//        });
 //    });
 //
 //    it('should validate unsuccessfully for this file upload because the file was an invalid type with wildcard type specified', function(done) {
-//        var result = testModelWildcardInstance.parseRequestAttributes(filesBadValueRequestStubInvalidType).validate(true);
-//        var errors = testModelWildcardInstance.getAllErrors();
-//        result.should.be.false;
-//        errors.should.have.property('picture');
-//        errors.picture.should.be.an.Array;
-//        errors.picture.should.containEql('Your Avatar Image must be one of the following file types: image/*');
-//        done();
+//        testModelWildcardInstance.parseRequestAttributes(filesBadValueRequestStubInvalidType).validate(true).then(function(validationResult) {
+//            validationResult.valid.should.be.false;
+//            validationResult.errors.should.have.property('picture');
+//            validationResult.errors.picture.should.be.an.Array;
+//            validationResult.errors.picture.should.containEql('Your Avatar Image must be one of the following file types: image/*');
+//            done();
+//        }).catch(function(e) {
+//            done(e);
+//        });
 //    });
-//
-//    it('should validate successfully for this file upload with wildcard mime types', function(done) {
-//        var result = testModelWildcardInstance.parseRequestAttributes(fileGoodValuesRequestStub).validate(true);
-//        result.should.be.true;
-//        done();
-//    });
+
+    it('should validate successfully for this file upload with wildcard mime types', function(done) {
+        testModelWildcardInstance.parseRequestAttributes(fileGoodValuesRequestStub).validate(true).then(function(validationResult) {
+            validationResult.valid.should.be.true;
+            done();
+        }).catch(function(e) {
+            done(e);
+        });
+    });
 });

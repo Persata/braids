@@ -200,7 +200,10 @@
             _this.errorMessages = [];
             modelIsValid = true;
             try {
-              return Promise.all(_this._customValidate(allErrors)).then(function(results) {
+              if (_this._joiValidate(allErrors) === false) {
+                modelIsValid = false;
+              }
+              return Promise.all(_this._customValidate(allErrors).concat(_this._fileValidate(allErrors))).then(function(results) {
                 _.remove(results, function(result) {
                   return result === true;
                 });
@@ -341,6 +344,8 @@
             if (this.customValidators[field] != null) {
               if (typeof this.customValidators[field] === 'function') {
                 promises.push(this._validateCustomFunction(field, this.customValidators[field], allErrors));
+              } else if (this.customValidators[field] instanceof Array) {
+                promises = promises.concat(this._validateArrayOfCustomValidators(allErrors, field));
               } else {
                 throw new Error('Custom Validators Must Be A Function Or An Array Of Functions');
               }
@@ -351,44 +356,47 @@
       };
 
       Model.prototype._validateArrayOfCustomValidators = function(allErrors, field) {
-        var customValidatorArray, customValidatorFunction, overallResult, singleResult, _i, _len;
-        overallResult = true;
+        var customValidatorArray, customValidatorFunction, promises, _i, _len;
+        promises = [];
         customValidatorArray = this.customValidators[field];
         for (_i = 0, _len = customValidatorArray.length; _i < _len; _i++) {
           customValidatorFunction = customValidatorArray[_i];
-          singleResult = this._validateCustomFunction(field, customValidatorFunction, allErrors);
-          if (singleResult !== true) {
-            overallResult = false;
-            if (allErrors !== true) {
-              return overallResult;
-            }
-          }
+          promises.push(this._validateCustomFunction(field, customValidatorFunction, allErrors));
         }
-        return overallResult;
+        return promises;
       };
 
       Model.prototype._validateCustomFunction = function(field, validationFunction, allErrors) {
         var fieldValue, label;
         label = this.getLabelText(field);
         fieldValue = this.getFieldValue(field);
-        return validationFunction(fieldValue).then();
+        return validationFunction(fieldValue).then((function(_this) {
+          return function(result) {
+            var parsedErrorMessage;
+            if (result !== true) {
+              parsedErrorMessage = result.replace('{{label}}', label);
+              _this.addError(field, parsedErrorMessage, allErrors);
+              return false;
+            } else {
+              return true;
+            }
+          };
+        })(this));
       };
 
       Model.prototype._fileValidate = function(allErrors) {
-        var field, overallResult, _i, _len, _ref;
-        overallResult = true;
+        var field, promises, _i, _len, _ref;
+        promises = [];
         _ref = this.fields;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           field = _ref[_i];
           if (allErrors || (this.errorMessages[field] == null)) {
             if (this.fileValidators[field] != null) {
-              if (new this.fileValidators[field]().validate(field, this, allErrors) !== true) {
-                overallResult = false;
-              }
+              promises.push(new this.fileValidators[field]().validate(field, this, allErrors));
             }
           }
         }
-        return overallResult;
+        return promises;
       };
 
       return Model;
@@ -409,52 +417,53 @@
       FileValidator.prototype.enforceMimeMatch = false;
 
       FileValidator.prototype.validate = function(field, model, allErrors) {
-        var bytesAmount, errorString, fileObject, filePath, label, mimeType, overallResult, regexResult, _i, _len, _ref, _ref1;
-        overallResult = true;
-        fileObject = model[field];
-        label = model.getLabelText(field);
-        if (this.required === true) {
-          if ((fileObject == null) || fileObject.size === 0 || fileObject.name === '' || fileObject.originalFilename === '') {
-            model.addError(field, "" + label + " is a required field");
-            overallResult = false;
-            if (allErrors !== true) {
-              return overallResult;
+        return new Promise((function(_this) {
+          return function(resolve) {
+            var bytesAmount, errorString, fileObject, filePath, label, mimeType, overallResult, regexResult, _i, _len, _ref, _ref1;
+            overallResult = true;
+            fileObject = model[field];
+            label = model.getLabelText(field);
+            if (_this.required === true) {
+              if ((fileObject == null) || fileObject.size === 0 || fileObject.name === '' || fileObject.originalFilename === '') {
+                model.addError(field, "" + label + " is a required field");
+                overallResult = false;
+                if (allErrors !== true) {
+                  resolve(overallResult);
+                }
+              }
             }
-          }
-        }
-        if (this.validMimeTypes && this.validMimeTypes.length > 0) {
-          _ref = this.validMimeTypes;
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            mimeType = _ref[_i];
-            regexResult = mimeTypeWildcardRegex.exec(mimeType);
-            if (regexResult && (regexResult.length === 3) && (regexResult[1] === mimeTypeRegex.exec(fileObject.type)[1])) {
-              return true;
+            if (_this.validMimeTypes && _this.validMimeTypes.length > 0) {
+              _ref = _this.validMimeTypes;
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                mimeType = _ref[_i];
+                regexResult = mimeTypeWildcardRegex.exec(mimeType);
+              }
+              if (_ref1 = fileObject.type, __indexOf.call(_this.validMimeTypes, _ref1) < 0) {
+                errorString = ("" + label + " must be one of the following file types: ") + (_this.validMimeTypes.join(", "));
+                model.addError(field, errorString, allErrors);
+                overallResult = false;
+                if (allErrors !== true) {
+                  resolve(overallResult);
+                }
+              }
             }
-          }
-          if (_ref1 = fileObject.type, __indexOf.call(this.validMimeTypes, _ref1) < 0) {
-            errorString = ("" + label + " must be one of the following file types: ") + (this.validMimeTypes.join(", "));
-            model.addError(field, errorString, allErrors);
-            overallResult = false;
-            if (allErrors !== true) {
-              return overallResult;
+            if (_this.maxFileSize) {
+              bytesAmount = sizeInBytes(_this.maxFileSize);
+              if (fileObject.size > bytesAmount) {
+                errorString = ("" + label + " is too large - it must be smaller than ") + (humanizeBytes(bytesAmount));
+                model.addError(field, errorString, allErrors);
+                overallResult = false;
+                if (allErrors !== true) {
+                  resolve(overallResult);
+                }
+              }
             }
-          }
-        }
-        if (this.maxFileSize) {
-          bytesAmount = sizeInBytes(this.maxFileSize);
-          if (fileObject.size > bytesAmount) {
-            errorString = ("" + label + " is too large - it must be smaller than ") + (humanizeBytes(bytesAmount));
-            model.addError(field, errorString, allErrors);
-            overallResult = false;
-            if (allErrors !== true) {
-              return overallResult;
+            if (_this.enforceMimeMatch) {
+              filePath = fileObject.path;
             }
-          }
-        }
-        if (this.enforceMimeMatch) {
-          filePath = fileObject.path;
-        }
-        return overallResult;
+            return resolve(overallResult);
+          };
+        })(this));
       };
 
       return FileValidator;
@@ -470,3 +479,5 @@
   module.exports = Braids;
 
 }).call(this);
+
+//# sourceMappingURL=index.map
