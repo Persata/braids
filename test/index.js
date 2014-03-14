@@ -110,7 +110,7 @@ describe('Braids', function() {
         knexInstance = Knex.initialize({
             client: 'sqlite',
             connection: {
-                filename: "test/test.db"
+                filename: "test/files/test.db"
             }
         });
         done();
