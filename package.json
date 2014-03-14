@@ -1,34 +1,34 @@
 {
-  "name": "braids",
-  "description": "Facilitates the creation and validation of forms in Node applications.",
-  "version": "0.0.6",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/persata/braids.git"
-  },
-  "author": "Ross Kinsman",
-  "license": "BSD",
-  "readmeFilename": "README.md",
-  "main": "index.js",
-  "keywords": [
-    "express",
-    "form",
-    "validation",
-    "errors"
-  ],
-  "dependencies": {
-    "lodash": "~2.4.1",
-    "underscore.string": "~2.3.3",
-    "joi": "~2.7.0",
-    "bluebird": "^1.1.0",
-    "sqlite3": "^2.2.0"
-  },
-  "devDependencies": {
-    "should": "*",
-    "mocha": "*",
-    "knex": "^0.5.8"
-  },
-  "scripts": {
-    "test": "make test"
-  }
+    "name": "braids",
+    "description": "Facilitates the creation and validation of forms in Node applications.",
+    "version": "0.0.6",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/persata/braids.git"
+    },
+    "author": "Ross Kinsman",
+    "license": "BSD",
+    "readmeFilename": "README.md",
+    "main": "index.js",
+    "keywords": [
+        "express",
+        "form",
+        "validation",
+        "errors"
+    ],
+    "dependencies": {
+        "lodash": "~2.4.1",
+        "underscore.string": "~2.3.3",
+        "joi": "~2.7.0",
+        "bluebird": "^1.1.0"
+    },
+    "devDependencies": {
+        "should": "*",
+        "mocha": "*",
+        "knex": "^0.5.8",
+        "sqlite3": "^2.2.0"
+    },
+    "scripts": {
+        "test": "make test"
+    }
 }
