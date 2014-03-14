@@ -362,7 +362,7 @@ class Braids
       # Get Value
       fieldValue = @.getFieldValue(field)
       # Call Validation Function
-      validationFunction(fieldValue).then (result) =>
+      validationFunction(fieldValue, @).then (result) =>
         # If Not Exactly True
         if result isnt true
           parsedErrorMessage = result.replace '{{label}}', label

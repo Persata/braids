@@ -372,7 +372,7 @@
         var fieldValue, label;
         label = this.getLabelText(field);
         fieldValue = this.getFieldValue(field);
-        return validationFunction(fieldValue).then((function(_this) {
+        return validationFunction(fieldValue, this).then((function(_this) {
           return function(result) {
             var parsedErrorMessage;
             if (result !== true) {
