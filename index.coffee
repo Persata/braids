@@ -117,19 +117,19 @@ class Braids
     fields: []
 
     # Labels
-    labels: []
+    labels: {}
 
     # Joi Validators
-    joiValidators: []
+    joiValidators: {}
 
     # Custom Validators
-    customValidators: []
+    customValidators: {}
 
     # File Validators
-    fileValidators: []
+    fileValidators: {}
 
     # Error Messages
-    errorMessages: []
+    errorMessages: {}
 
     # Constructor
     constructor: ->
@@ -188,7 +188,7 @@ class Braids
       # Return New Promise
       return new Promise((resolve, reject) =>
         # Clear Error Messages
-        @.errorMessages = []
+        @.errorMessages = {}
         # Final Result
         modelIsValid = true
         # Try Validation

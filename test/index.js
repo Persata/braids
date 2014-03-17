@@ -193,7 +193,7 @@ describe('Braids', function() {
 
     it('should have error messages for these values', function(done) {
         testModelInstance.parseRequestAttributes(badValueRequestStub).validate(true).then(function(validationResult) {
-            validationResult.errors.should.be.an.Array;
+            validationResult.errors.should.be.an.Object;
             validationResult.errors.should.have.property('email_address');
             validationResult.errors.email_address.should.be.an.Array;
             validationResult.errors.email_address.should.containEql('The value of Email Address must be a valid email');

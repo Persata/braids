@@ -102,15 +102,15 @@
 
       Model.prototype.fields = [];
 
-      Model.prototype.labels = [];
+      Model.prototype.labels = {};
 
-      Model.prototype.joiValidators = [];
+      Model.prototype.joiValidators = {};
 
-      Model.prototype.customValidators = [];
+      Model.prototype.customValidators = {};
 
-      Model.prototype.fileValidators = [];
+      Model.prototype.fileValidators = {};
 
-      Model.prototype.errorMessages = [];
+      Model.prototype.errorMessages = {};
 
       function Model() {
         this._fileValidate = __bind(this._fileValidate, this);
@@ -199,7 +199,7 @@
         return new Promise((function(_this) {
           return function(resolve, reject) {
             var e, modelIsValid;
-            _this.errorMessages = [];
+            _this.errorMessages = {};
             modelIsValid = true;
             try {
               if (_this._joiValidate(allErrors) === false) {
@@ -506,3 +506,5 @@
   module.exports = Braids;
 
 }).call(this);
+
+//# sourceMappingURL=index.map
