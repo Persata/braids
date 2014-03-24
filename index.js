@@ -434,7 +434,7 @@
                 }
               }
             }
-            if (_this.validMimeTypes && _this.validMimeTypes.length > 0) {
+            if (_this.validMimeTypes && _this.validMimeTypes.length > 0 && fileObject.size > 0) {
               wildCardResult = false;
               wildcardValues = [];
               _ref = _this.validMimeTypes;
@@ -473,7 +473,7 @@
                 }
               }
             }
-            if (_this.enforceMimeMatch) {
+            if (_this.enforceMimeMatch && fileObject.size > 0) {
               filePath = fileObject.path;
               fileType = fileObject.type.trim();
               return execPromisified("file " + filePath + " --mime-type --brief -r").then(function(results) {
@@ -506,5 +506,3 @@
   module.exports = Braids;
 
 }).call(this);
-
-//# sourceMappingURL=index.map

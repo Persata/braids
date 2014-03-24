@@ -418,8 +418,8 @@ class Braids
             # All Errors?
             if allErrors isnt true
               resolve(overallResult)
-        # Valid MIME-Type?
-        if @.validMimeTypes and @.validMimeTypes.length > 0
+        # Valid MIME-Type? Only Check If A File Was Actually Uploaded (e.g. size > 0)
+        if @.validMimeTypes and @.validMimeTypes.length > 0 and fileObject.size > 0
           # Wildcard Result
           wildCardResult = false
           # Wildcard Array
@@ -468,8 +468,8 @@ class Braids
             # All Errors?
             if allErrors isnt true
               resolve(overallResult)
-        # Enforce MIME Match?
-        if @.enforceMimeMatch
+        # Enforce MIME Match? Only Check If A File Was Actually Uploaded (e.g. size > 0)
+        if @.enforceMimeMatch and fileObject.size > 0
           # Get File Path
           filePath = fileObject.path
           # Get File Type

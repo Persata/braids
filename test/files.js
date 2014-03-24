@@ -8,12 +8,12 @@ describe('Braids - File Upload Functionality', function() {
     /**
      * Test Models
      */
-    var testModel, testModelWildcard, testModelEnforce;
+    var testModel, testModelNotRequired, testModelWildcard, testModelEnforce;
 
     /**
      * Test Model Instances
      */
-    var testModelInstance, testModelWildcardInstance, testModelEnforceInstance;
+    var testModelInstance, testModelNotRequiredInstance, testModelWildcardInstance, testModelEnforceInstance;
 
     /**
      * Model Name
@@ -45,6 +45,16 @@ describe('Braids - File Upload Functionality', function() {
         picture: BraidsBase.FileValidator.extend({
             required: true,
             validMimeTypes: ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'],
+            maxFileSize: 2097152
+        })
+    };
+
+    /**
+     * File Validators - Not Required
+     */
+    var fileValidatorsNotRequiredWildcard = {
+        picture: BraidsBase.FileValidator.extend({
+            validMimeTypes: ['image/*'],
             maxFileSize: 2097152
         })
     };
@@ -97,6 +107,9 @@ describe('Braids - File Upload Functionality', function() {
             joiValidators: modelValidators,
             fileValidators: fileValidators
         });
+        testModelNotRequired = testModel.Extend({
+            fileValidators: fileValidatorsNotRequiredWildcard
+        });
         testModelWildcard = testModel.Extend({
             fileValidators: fileValidatorsWildcard
         });
@@ -106,6 +119,7 @@ describe('Braids - File Upload Functionality', function() {
         testModelInstance = new testModel();
         testModelEnforceInstance = new testModelEnforce();
         testModelWildcardInstance = new testModelWildcard();
+        testModelNotRequiredInstance = new testModelNotRequired();
     });
 
     it('should parse request files into the form values', function(done) {
@@ -122,6 +136,15 @@ describe('Braids - File Upload Functionality', function() {
 
     it('should validate successfully for this file upload', function(done) {
         testModelInstance.parseRequestAttributes(fileGoodValuesRequestStub).validate(true).then(function(validationResult) {
+            validationResult.valid.should.be.true;
+            done();
+        }).catch(function(e) {
+            done(e);
+        });
+    });
+
+    it('should validate successfully for this file upload even with no file upload', function(done) {
+        testModelNotRequiredInstance.parseRequestAttributes(fileValidatorsWildcard).validate(true).then(function(validationResult) {
             validationResult.valid.should.be.true;
             done();
         }).catch(function(e) {
