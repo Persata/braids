@@ -285,7 +285,7 @@
           fieldName = this.name + '_' + field;
           return fieldName;
         } else {
-          throw new Error('Field Not Found In ' + this.name(' Model'));
+          throw new Error('Field "' + field + '" Not Found In ' + this.name + ' Model');
         }
       };
 
