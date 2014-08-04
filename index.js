@@ -120,6 +120,7 @@
         this.fieldIdentifier = __bind(this.fieldIdentifier, this);
         this.getContainerClasses = __bind(this.getContainerClasses, this);
         this.getLabelText = __bind(this.getLabelText, this);
+        this.getHintText = __bind(this.getHintText, this);
         this.getErrorsForField = __bind(this.getErrorsForField, this);
         this.getAllErrors = __bind(this.getAllErrors, this);
         this.addError = __bind(this.addError, this);
@@ -244,6 +245,14 @@
           return this.errorMessages[field];
         } else {
           return [];
+        }
+      };
+
+      Model.prototype.getHintText = function(field) {
+        if (this.hints[field]) {
+          return this.hints[field];
+        } else {
+          return '';
         }
       };
 

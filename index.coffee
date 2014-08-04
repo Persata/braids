@@ -230,6 +230,16 @@ class Braids
       else
         return []
 
+    # Get The Hint Text For A Field
+    getHintText: (field) =>
+      # Hint Exists?
+      if @.hints[field]
+        # Return
+        return @.hints[field]
+      else
+        # Return Empty String
+        return ''
+
     # Get The Label Text For A Field
     getLabelText: (field) =>
       # Label Exists?

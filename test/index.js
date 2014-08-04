@@ -36,6 +36,12 @@ describe('Braids', function() {
     var modelLabels = {email_address: 'Email Address', password: 'Password'};
 
     /**
+     * Model Hints
+     * @type {{password: string}}
+     */
+    var modelHints = {password: 'Choose a password - something memorable!'};
+
+    /**
      * Model Validators
      */
     var modelValidators = {
@@ -102,7 +108,8 @@ describe('Braids', function() {
             customValidators: customValidators
         });
         testModel = testModelWithoutLabels.extend({
-            labels: modelLabels
+            labels: modelLabels,
+            hints: modelHints
         });
         testModelWithoutLabelsInstance = new testModelWithoutLabels();
         testModelInstance = new testModel();
@@ -130,6 +137,16 @@ describe('Braids', function() {
     it('should have labels', function(done) {
         testModelInstance.getLabelText('email_address').should.equal('Email Address');
         testModelInstance.getLabelText('password').should.equal('Password');
+        done();
+    });
+
+    it('should return hint text for fields with hints', function (done) {
+        testModelInstance.getHintText('password').should.equal('Choose a password - something memorable!');
+        done();
+    });
+
+    it('should return an empty string for fields without hints', function (done) {
+        testModelInstance.getHintText('email_address').should.equal('');
         done();
     });
 
