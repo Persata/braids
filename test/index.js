@@ -150,6 +150,11 @@ describe('Braids', function() {
         done();
     });
 
+    it('should return an empty string for models without hints', function (done) {
+        testModelWithoutLabelsInstance.getHintText('email_address').should.equal('');
+        done();
+    });
+
     it('should create humanised labels when not provided', function(done) {
         testModelWithoutLabelsInstance.getLabelText('email_address').should.equal('Email address');
         testModelWithoutLabelsInstance.getLabelText('password').should.equal('Password');

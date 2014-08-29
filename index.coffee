@@ -119,6 +119,9 @@ class Braids
     # Labels
     labels: {}
 
+    # Hints
+    hints: {}
+
     # Joi Validators
     joiValidators: {}
 
@@ -233,7 +236,7 @@ class Braids
     # Get The Hint Text For A Field
     getHintText: (field) =>
       # Hint Exists?
-      if @.hints[field]
+      if @.hints[field]?
         # Return
         return @.hints[field]
       else

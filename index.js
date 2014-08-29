@@ -104,6 +104,8 @@
 
       Model.prototype.labels = {};
 
+      Model.prototype.hints = {};
+
       Model.prototype.joiValidators = {};
 
       Model.prototype.customValidators = {};
@@ -249,7 +251,7 @@
       };
 
       Model.prototype.getHintText = function(field) {
-        if (this.hints[field]) {
+        if (this.hints[field] != null) {
           return this.hints[field];
         } else {
           return '';
